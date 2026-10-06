@@ -3,314 +3,1977 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+
 <meta name="theme-color" content="#f6efe3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="100 Movies">
+
 <title>100 Days, 100 Movies</title>
+
 <style>
 :root{
-  --bg:#f6efe3; --card:#fffaf2; --text:#241f1b; --muted:#82766b;
-  --line:#e5d8c9; --accent:#b92d2d; --accent2:#d94b45;
-  --shadow:0 7px 22px rgba(77,48,25,.08);
+  --bg:#f6efe3;
+  --card:rgba(255,250,242,.94);
+  --text:#241f1b;
+  --muted:#82766b;
+  --line:#e5d8c9;
+  --accent:#b92d2d;
+  --shadow:0 7px 22px rgba(77,48,25,.10);
 }
-@media(prefers-color-scheme:dark){
-  :root{--bg:#171514;--card:#211e1c;--text:#f6eee5;--muted:#aa9d91;--line:#38322e;--accent:#ed5b56;--accent2:#f1736d;--shadow:0 8px 24px rgba(0,0,0,.25)}
-}
-html[data-theme="light"]{color-scheme:light}
+
 html[data-theme="dark"]{
-  --bg:#171514;--card:#211e1c;--text:#f6eee5;--muted:#aa9d91;--line:#38322e;
-  --accent:#ed5b56;--accent2:#f1736d;--shadow:0 8px 24px rgba(0,0,0,.25);color-scheme:dark
+  --bg:#171514;
+  --card:rgba(33,30,28,.94);
+  --text:#f6eee5;
+  --muted:#aa9d91;
+  --line:#38322e;
+  --accent:#ed5b56;
+  --shadow:0 8px 24px rgba(0,0,0,.3);
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  min-height:100%;
+}
+
 body{
-  margin:0;background:var(--bg);color:var(--text);
+  color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;
-  min-height:100vh;
+
+  background:
+    linear-gradient(
+      rgba(246,239,227,.88),
+      rgba(246,239,227,.95)
+    ),
+    url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1800&q=80")
+    center/cover fixed no-repeat;
 }
-button,input{font:inherit}
-button{cursor:pointer}
-.app{max-width:720px;margin:0 auto;padding:20px 16px calc(32px + env(safe-area-inset-bottom))}
+
+html[data-theme="dark"] body{
+  background:
+    linear-gradient(
+      rgba(23,21,20,.82),
+      rgba(23,21,20,.95)
+    ),
+    url("https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1800&q=80")
+    center/cover fixed no-repeat;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  max-width:720px;
+  margin:auto;
+  padding:20px 16px calc(32px + env(safe-area-inset-bottom));
+}
+
 header{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding-top:max(4px,env(safe-area-inset-top));margin-bottom:18px
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding-top:max(4px,env(safe-area-inset-top));
+  margin-bottom:18px;
 }
-h1{font-size:25px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-.6px}
+
+h1{
+  font-size:25px;
+  line-height:1.1;
+  margin:0;
+  font-weight:800;
+  letter-spacing:-.6px;
+}
+
+.top-tools{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
 .add-btn{
-  width:44px;height:44px;border:0;border-radius:50%;background:var(--accent);
-  color:white;font-size:30px;line-height:40px;box-shadow:0 5px 14px rgba(185,45,45,.25)
+  width:44px;
+  height:44px;
+  border:0;
+  border-radius:50%;
+  background:var(--accent);
+  color:white;
+  font-size:30px;
+  line-height:40px;
+  box-shadow:0 5px 14px rgba(185,45,45,.25);
 }
-.summary{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:650;margin-bottom:9px}
-.summary span:last-child{color:var(--muted);font-weight:500}
-.progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-bottom:20px}
-.progress>div{height:100%;width:0;background:var(--accent);border-radius:inherit;transition:width .25s ease}
-.list{display:flex;flex-direction:column;gap:10px}
-.movie{
-  display:grid;grid-template-columns:36px minmax(0,1fr) 42px;align-items:center;
-  background:var(--card);border:1px solid var(--line);border-radius:16px;
-  min-height:78px;padding:10px 7px 10px 10px;box-shadow:var(--shadow)
-}
-.num{font-size:14px;font-weight:800;color:var(--muted);text-align:center}
-.movie-main{min-width:0;padding:0 7px}
-.movie-title{font-size:16px;font-weight:750;line-height:1.25;overflow-wrap:anywhere}
-.movie.watched .movie-title{text-decoration:line-through;color:var(--muted)}
-.meta{font-size:12.5px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tick{
-  appearance:none;width:22px;height:22px;border:2px solid var(--muted);border-radius:7px;
-  margin:0 auto;position:relative;background:transparent
-}
-.tick:checked{border-color:var(--accent);background:var(--accent)}
-.tick:checked:after{
-  content:"";position:absolute;width:5px;height:10px;border:solid white;border-width:0 2px 2px 0;
-  transform:rotate(45deg);left:7px;top:3px
-}
-.menu-btn{
-  border:0;background:transparent;color:var(--muted);font-size:24px;width:40px;height:44px;
-  border-radius:10px
-}
-.menu-btn:active{background:var(--line)}
-.empty{text-align:center;color:var(--muted);padding:40px 15px}
-.overlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;
-  transition:opacity .2s;z-index:10
-}
-.overlay.open{opacity:1;pointer-events:auto}
-.sheet{
-  position:fixed;left:0;right:0;bottom:0;z-index:11;background:var(--card);
-  border-radius:22px 22px 0 0;padding:10px 18px calc(18px + env(safe-area-inset-bottom));
-  transform:translateY(105%);transition:transform .25s ease;max-height:92vh;overflow:auto
-}
-.sheet.open{transform:translateY(0)}
-.handle{width:42px;height:5px;border-radius:99px;background:var(--line);margin:3px auto 17px}
-.sheet h2{margin:0 0 16px;font-size:21px}
-.field{margin-bottom:13px}
-.field label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:0 0 6px}
-.field input{
-  width:100%;height:48px;border:1px solid var(--line);border-radius:12px;background:var(--bg);
-  color:var(--text);padding:0 13px;outline:none
-}
-.field input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(185,45,45,.12)}
-.actions{display:flex;gap:10px;margin-top:5px}
-.action{height:48px;border-radius:12px;border:1px solid var(--line);flex:1;font-weight:750}
-.cancel{background:transparent;color:var(--text)}
-.save{background:var(--accent);border-color:var(--accent);color:#fff}
-.menu-pop{
-  position:fixed;z-index:20;width:190px;background:var(--card);border:1px solid var(--line);
-  border-radius:14px;box-shadow:0 12px 35px rgba(0,0,0,.18);overflow:hidden;display:none
-}
-.menu-pop.show{display:block}
-.menu-pop button{
-  display:block;width:100%;padding:13px 15px;border:0;background:transparent;color:var(--text);
-  text-align:left;font-size:14px
-}
-.menu-pop button+button{border-top:1px solid var(--line)}
-.menu-pop button:active{background:var(--bg)}
-.menu-pop .danger{color:#c62d2d}
-.top-tools{display:flex;align-items:center;gap:8px}
+
 .theme-btn{
-  border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:50%;
-  width:40px;height:40px;font-size:17px
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--text);
+  border-radius:50%;
+  width:40px;
+  height:40px;
+  font-size:17px;
 }
+
+.summary{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:14px;
+  font-weight:650;
+  margin-bottom:9px;
+}
+
+.summary span:last-child{
+  color:var(--muted);
+  font-weight:500;
+}
+
+.progress{
+  height:8px;
+  border-radius:99px;
+  background:var(--line);
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.progress>div{
+  height:100%;
+  width:0;
+  background:var(--accent);
+  border-radius:inherit;
+  transition:width .25s ease;
+}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.movie{
+  display:grid;
+  grid-template-columns:36px minmax(0,1fr) 42px;
+  align-items:center;
+
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+
+  min-height:78px;
+  padding:10px 7px 10px 10px;
+
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(5px);
+}
+
+.num{
+  font-size:14px;
+  font-weight:800;
+  color:var(--muted);
+  text-align:center;
+}
+
+.movie-main{
+  min-width:0;
+  padding:0 7px;
+}
+
+.movie-title{
+  font-size:16px;
+  font-weight:750;
+  line-height:1.25;
+  overflow-wrap:anywhere;
+}
+
+.movie.watched .movie-title{
+  text-decoration:line-through;
+  color:var(--muted);
+}
+
+.meta{
+  font-size:12.5px;
+  color:var(--muted);
+  margin-top:4px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.tick{
+  appearance:none;
+  width:22px;
+  height:22px;
+  border:2px solid var(--muted);
+  border-radius:7px;
+  margin:0 auto;
+  position:relative;
+  background:transparent;
+}
+
+.tick:checked{
+  border-color:var(--accent);
+  background:var(--accent);
+}
+
+.tick:checked:after{
+  content:"";
+  position:absolute;
+  width:5px;
+  height:10px;
+  border:solid white;
+  border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+  left:7px;
+  top:3px;
+}
+
+.menu-btn{
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:24px;
+  width:40px;
+  height:44px;
+  border-radius:10px;
+}
+
+.menu-btn:active{
+  background:var(--line);
+}
+
+/* Bottom sheet */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.4);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s;
+  z-index:10;
+}
+
+.overlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.sheet{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  z-index:11;
+
+  background:var(--card);
+
+  border-radius:22px 22px 0 0;
+
+  padding:10px 18px calc(18px + env(safe-area-inset-bottom));
+
+  transform:translateY(105%);
+  transition:transform .25s ease;
+
+  max-height:92vh;
+  overflow:auto;
+}
+
+.sheet.open{
+  transform:translateY(0);
+}
+
+.handle{
+  width:42px;
+  height:5px;
+  border-radius:99px;
+  background:var(--line);
+  margin:3px auto 17px;
+}
+
+.sheet h2{
+  margin:0 0 16px;
+  font-size:21px;
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  color:var(--muted);
+  margin:0 0 6px;
+}
+
+.field input{
+  width:100%;
+  height:48px;
+
+  border:1px solid var(--line);
+  border-radius:12px;
+
+  background:var(--bg);
+  color:var(--text);
+
+  padding:0 13px;
+  outline:none;
+}
+
+.field input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(185,45,45,.12);
+}
+
+.lookup{
+  width:100%;
+  height:48px;
+
+  border-radius:12px;
+  border:0;
+
+  background:var(--accent);
+  color:white;
+
+  font-weight:750;
+  margin-bottom:13px;
+}
+
+.lookup:disabled{
+  opacity:.6;
+}
+
+.actions{
+  display:flex;
+  gap:10px;
+  margin-top:5px;
+}
+
+.action{
+  height:48px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  flex:1;
+  font-weight:750;
+}
+
+.cancel{
+  background:transparent;
+  color:var(--text);
+}
+
+.save{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+}
+
+/* Menu */
+
+.menu-pop{
+  position:fixed;
+  z-index:20;
+
+  width:190px;
+
+  background:var(--card);
+  border:1px solid var(--line);
+
+  border-radius:14px;
+
+  box-shadow:0 12px 35px rgba(0,0,0,.18);
+
+  overflow:hidden;
+
+  display:none;
+}
+
+.menu-pop.show{
+  display:block;
+}
+
+.menu-pop button{
+  display:block;
+  width:100%;
+
+  padding:13px 15px;
+
+  border:0;
+  background:transparent;
+
+  color:var(--text);
+
+  text-align:left;
+  font-size:14px;
+}
+
+.menu-pop button+button{
+  border-top:1px solid var(--line);
+}
+
+.menu-pop button:active{
+  background:var(--bg);
+}
+
+.menu-pop .danger{
+  color:#c62d2d;
+}
+
+/* Toast */
+
 .toast{
-  position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);opacity:0;
-  background:#241f1b;color:#fff;padding:10px 14px;border-radius:99px;font-size:13px;
-  z-index:30;pointer-events:none;transition:.2s;white-space:nowrap
+  position:fixed;
+  left:50%;
+  bottom:22px;
+
+  transform:translate(-50%,20px);
+
+  opacity:0;
+
+  background:#241f1b;
+  color:#fff;
+
+  padding:10px 14px;
+
+  border-radius:99px;
+
+  font-size:13px;
+
+  z-index:30;
+
+  pointer-events:none;
+
+  transition:.2s;
+
+  white-space:nowrap;
 }
-.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(min-width:600px){.app{padding-left:22px;padding-right:22px}.sheet{left:50%;right:auto;width:520px;transform:translate(-50%,105%);border-radius:22px}.sheet.open{transform:translate(-50%,0)}}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+.empty{
+  text-align:center;
+  color:var(--muted);
+  padding:40px 15px;
+}
+
+@media(min-width:600px){
+
+  .app{
+    padding-left:22px;
+    padding-right:22px;
+  }
+
+  .sheet{
+    left:50%;
+    right:auto;
+    width:520px;
+
+    transform:translate(-50%,105%);
+
+    border-radius:22px;
+  }
+
+  .sheet.open{
+    transform:translate(-50%,0);
+  }
+}
 </style>
 </head>
+
 <body>
+
 <div class="app">
-  <header>
-    <h1>100 Days, 100 Movies</h1>
-    <div class="top-tools">
-      <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">☾</button>
-      <button class="add-btn" id="addBtn" aria-label="Add movie">+</button>
-    </div>
-  </header>
-  <div class="summary"><span id="summaryLeft">0 of 100 watched</span><span id="summaryRight">0 on the list</span></div>
-  <div class="progress"><div id="progressBar"></div></div>
-  <main id="movieList" class="list"></main>
+
+<header>
+
+<h1>100 Days, 100 Movies</h1>
+
+<div class="top-tools">
+
+<button
+class="theme-btn"
+id="themeBtn"
+aria-label="Toggle theme">
+☾
+</button>
+
+<button
+class="add-btn"
+id="addBtn"
+aria-label="Add movie">
++
+</button>
+
 </div>
 
-<div class="overlay" id="overlay"></div>
-<section class="sheet" id="sheet" aria-modal="true" role="dialog">
-  <div class="handle"></div>
-  <h2 id="sheetTitle">Add movie</h2>
-  <form id="movieForm">
-    <div class="field"><label for="title">Title</label><input id="title" required autocomplete="off"></div>
-    <div class="field"><label for="director">Director</label><input id="director" autocomplete="off"></div>
-    <div class="field"><label for="year">Year</label><input id="year" inputmode="numeric" autocomplete="off"></div>
-    <div class="field"><label for="position">Position</label><input id="position" type="number" inputmode="numeric" min="1" max="100" required></div>
-    <div class="actions"><button type="button" class="action cancel" id="cancelBtn">Cancel</button><button type="submit" class="action save">Save</button></div>
-  </form>
-</section>
-<div class="menu-pop" id="menuPop">
-  <button data-action="edit">Edit</button>
-  <button data-action="up">Move up</button>
-  <button data-action="down">Move down</button>
-  <button data-action="delete" class="danger">Delete</button>
+</header>
+
+<div class="summary">
+
+<span id="summaryLeft">
+0 of 100 watched
+</span>
+
+<span id="summaryRight">
+0 on the list
+</span>
+
 </div>
-<div class="toast" id="toast"></div>
+
+<div class="progress">
+<div id="progressBar"></div>
+</div>
+
+<main
+id="movieList"
+class="list">
+</main>
+
+</div>
+
+
+<!-- Overlay -->
+
+<div
+class="overlay"
+id="overlay">
+</div>
+
+
+<!-- Add/Edit Sheet -->
+
+<section
+class="sheet"
+id="sheet"
+aria-modal="true"
+role="dialog">
+
+<div class="handle"></div>
+
+<h2 id="sheetTitle">
+Add movie
+</h2>
+
+<form id="movieForm">
+
+<div class="field">
+
+<label for="title">
+Movie title
+</label>
+
+<input
+id="title"
+required
+autocomplete="off"
+placeholder="e.g. Interstellar">
+
+</div>
+
+
+<button
+type="button"
+class="lookup"
+id="lookupBtn">
+
+🎬 Find year & director
+
+</button>
+
+
+<div class="field">
+
+<label for="director">
+Director
+</label>
+
+<input
+id="director"
+autocomplete="off">
+
+</div>
+
+
+<div class="field">
+
+<label for="year">
+Year
+</label>
+
+<input
+id="year"
+inputmode="numeric"
+autocomplete="off">
+
+</div>
+
+
+<div class="field">
+
+<label for="position">
+Position
+</label>
+
+<input
+id="position"
+type="number"
+inputmode="numeric"
+min="1"
+max="100"
+required>
+
+</div>
+
+
+<div class="actions">
+
+<button
+type="button"
+class="action cancel"
+id="cancelBtn">
+
+Cancel
+
+</button>
+
+<button
+type="submit"
+class="action save">
+
+Save
+
+</button>
+
+</div>
+
+</form>
+
+</section>
+
+
+<!-- Three-dot menu -->
+
+<div
+class="menu-pop"
+id="menuPop">
+
+<button data-action="edit">
+Edit
+</button>
+
+<button data-action="up">
+Move up
+</button>
+
+<button data-action="down">
+Move down
+</button>
+
+<button
+data-action="delete"
+class="danger">
+
+Delete
+
+</button>
+
+</div>
+
+
+<div
+class="toast"
+id="toast">
+</div>
+
 
 <script>
+
 (() => {
-  const KEY="100-days-100-movies-v1";
-  const defaults=[
-    {title:"The Odyssey",director:"Christopher Nolan",year:"2026",watched:false},
-    {title:"Prime Time",director:"Jakub Piątek",year:"2021",watched:false},
-    {title:"Invite",director:"",year:"",watched:false},
-    {title:"Parasite",director:"Bong Joon-ho",year:"2019",watched:false},
-    {title:"Memories of Murder",director:"Bong Joon-ho",year:"2003",watched:false},
-    {title:"The Godfather",director:"Francis Ford Coppola",year:"1972",watched:false},
-    {title:"The Godfather Part II",director:"",year:"1974",watched:false},
-    {title:"The Godfather Part III",director:"",year:"1990",watched:false},
-    {title:"The Notebook",director:"Nick Cassavetes",year:"2004",watched:false},
-    {title:"The Prestige",director:"Christopher Nolan",year:"2006",watched:false}
-  ];
 
-  const $=id=>document.getElementById(id);
-  let movies=load();
-  let editingIndex=null, menuIndex=null;
+const STORAGE_KEY =
+"100-days-100-movies-v2";
 
-  function load(){
-    try{
-      const raw=localStorage.getItem(KEY);
-      if(raw){
-        const parsed=JSON.parse(raw);
-        if(Array.isArray(parsed)) return parsed.map(m=>({...m,watched:!!m.watched}));
-      }
-    }catch(e){console.warn("Could not load saved movies",e)}
-    return defaults.map(m=>({...m}));
-  }
-  function save(){
-    try{
-      localStorage.setItem(KEY,JSON.stringify(movies));
-    }catch(e){toast("Could not save changes")}
-  }
-  function render(){
-    const list=$("movieList");
-    list.innerHTML="";
-    movies.forEach((m,i)=>{
-      const card=document.createElement("article");
-      card.className="movie"+(m.watched?" watched":"");
-      const meta=[m.year,m.director].filter(Boolean).join(" · ");
-      card.innerHTML=`
-        <div class="num">${i+1}</div>
-        <div class="movie-main">
-          <div class="movie-title"></div>
-          <div class="meta"></div>
-        </div>
-        <div style="display:flex;align-items:center;gap:0">
-          <input class="tick" type="checkbox" ${m.watched?"checked":""} aria-label="Mark watched">
-          <button class="menu-btn" aria-label="Movie menu">⋮</button>
-        </div>`;
-      card.querySelector(".movie-title").textContent=m.title||"Untitled";
-      card.querySelector(".meta").textContent=meta||"Details not added";
-      card.querySelector(".tick").addEventListener("change",e=>{
-        movies[i].watched=e.target.checked;save();render();
-      });
-      card.querySelector(".menu-btn").addEventListener("click",e=>{
-        e.stopPropagation();showMenu(i,e.currentTarget);
-      });
-      list.appendChild(card);
-    });
-    const watched=movies.filter(m=>m.watched).length;
-    $("summaryLeft").textContent=`${watched} of 100 watched`;
-    $("summaryRight").textContent=`${movies.length} on the list`;
-    $("progressBar").style.width=`${Math.min(watched/100*100,100)}%`;
-  }
-  function showSheet(index=null){
-    editingIndex=index;
-    $("sheetTitle").textContent=index===null?"Add movie":"Edit movie";
-    const m=index===null?{title:"",director:"",year:"",position:movies.length+1}:movies[index];
-    $("title").value=m.title||"";
-    $("director").value=m.director||"";
-    $("year").value=m.year||"";
-    $("position").value=index===null?Math.min(m.position||movies.length+1,100):index+1;
-    $("overlay").classList.add("open");$("sheet").classList.add("open");
-    setTimeout(()=>$("title").focus(),150);
-  }
-  function closeSheet(){
-    $("overlay").classList.remove("open");$("sheet").classList.remove("open");editingIndex=null;
-  }
-  function showMenu(index,button){
-    menuIndex=index;
-    const r=button.getBoundingClientRect(), pop=$("menuPop");
-    pop.classList.add("show");
-    const width=190;
-    let left=Math.min(window.innerWidth-width-10,Math.max(10,r.right-width));
-    let top=r.bottom+5;
-    if(top+190>window.innerHeight)top=Math.max(10,r.top-195);
-    pop.style.left=left+"px";pop.style.top=top+"px";
-  }
-  function hideMenu(){ $("menuPop").classList.remove("show");menuIndex=null; }
-  function move(from,to){
-    if(to<0||to>=movies.length)return;
-    const [item]=movies.splice(from,1);movies.splice(to,0,item);save();render();
-  }
-  function toast(msg){
-    const t=$("toast");t.textContent=msg;t.classList.add("show");
-    clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove("show"),1800);
-  }
 
-  $("addBtn").onclick=()=>showSheet();
-  $("cancelBtn").onclick=closeSheet;
-  $("overlay").onclick=closeSheet;
-  $("movieForm").onsubmit=e=>{
-    e.preventDefault();
-    const title=$("title").value.trim();
-    if(!title)return;
-    const director=$("director").value.trim();
-    const year=$("year").value.trim();
-    let pos=parseInt($("position").value,10);
-    if(!Number.isFinite(pos))pos=movies.length+1;
-    pos=Math.max(1,Math.min(100,pos));
+const DEFAULT_MOVIES = [
 
-    if(editingIndex===null){
-      const item={title,director,year,watched:false};
-      movies.splice(Math.min(pos-1,movies.length),0,item);
-      if(movies.length>100)movies.length=100;
-      toast("Movie added");
-    }else{
-      const old=movies[editingIndex];
-      old.title=title;old.director=director;old.year=year;
-      const [item]=movies.splice(editingIndex,1);
-      movies.splice(Math.min(pos-1,movies.length),0,item);
-      toast("Movie updated");
-    }
-    save();render();closeSheet();
-  };
-  $("menuPop").onclick=e=>{
-    const action=e.target.dataset.action;
-    if(!action||menuIndex===null)return;
-    const i=menuIndex;hideMenu();
-    if(action==="edit")showSheet(i);
-    if(action==="up")move(i,i-1);
-    if(action==="down")move(i,i+1);
-    if(action==="delete"){
-      const name=movies[i]?.title||"Movie";
-      if(confirm(`Delete "${name}" from your list?`)){movies.splice(i,1);save();render();toast("Movie deleted")}
-    }
-  };
-  document.addEventListener("click",e=>{
-    if(!$("menuPop").contains(e.target)&&!e.target.closest(".menu-btn"))hideMenu();
-  });
-  document.addEventListener("keydown",e=>{if(e.key==="Escape"){hideMenu();closeSheet()}});
-  $("themeBtn").onclick=()=>{
-    const current=document.documentElement.dataset.theme;
-    const next=current==="dark"?"light":current==="light"?"dark":(matchMedia("(prefers-color-scheme:dark)").matches?"light":"dark");
-    document.documentElement.dataset.theme=next;
-    try{localStorage.setItem("100-days-theme",next)}catch(e){}
-    $("themeBtn").textContent=next==="dark"?"☀":"☾";
-  };
-  try{
-    const savedTheme=localStorage.getItem("100-days-theme");
-    if(savedTheme){document.documentElement.dataset.theme=savedTheme;$("themeBtn").textContent=savedTheme==="dark"?"☀":"☾"}
-  }catch(e){}
-  render();
+{
+title:"The Odyssey",
+director:"Christopher Nolan",
+year:"2026",
+watched:false
+},
+
+{
+title:"Prime Time",
+director:"Jakub Piątek",
+year:"2021",
+watched:false
+},
+
+{
+title:"Invite",
+director:"",
+year:"",
+watched:false
+},
+
+{
+title:"Parasite",
+director:"Bong Joon-ho",
+year:"2019",
+watched:false
+},
+
+{
+title:"Memories of Murder",
+director:"Bong Joon-ho",
+year:"2003",
+watched:false
+},
+
+{
+title:"The Godfather",
+director:"Francis Ford Coppola",
+year:"1972",
+watched:false
+},
+
+{
+title:"The Godfather Part II",
+director:"Francis Ford Coppola",
+year:"1974",
+watched:false
+},
+
+{
+title:"The Godfather Part III",
+director:"Francis Ford Coppola",
+year:"1990",
+watched:false
+},
+
+{
+title:"The Notebook",
+director:"Nick Cassavetes",
+year:"2004",
+watched:false
+},
+
+{
+title:"The Prestige",
+director:"Christopher Nolan",
+year:"2006",
+watched:false
+}
+
+];
+
+
+const $ = id =>
+document.getElementById(id);
+
+
+let movies =
+loadMovies();
+
+let editingIndex =
+null;
+
+let menuIndex =
+null;
+
+
+/* -----------------------------
+   LOCAL STORAGE
+----------------------------- */
+
+function loadMovies(){
+
+try{
+
+const saved =
+localStorage.getItem(STORAGE_KEY);
+
+if(saved){
+
+const parsed =
+JSON.parse(saved);
+
+if(Array.isArray(parsed)){
+
+return parsed.map(movie => ({
+
+title:movie.title || "",
+
+director:movie.director || "",
+
+year:movie.year || "",
+
+watched:Boolean(movie.watched)
+
+}));
+
+}
+
+}
+
+}catch(error){
+
+console.warn(
+"Could not load movies",
+error
+);
+
+}
+
+return DEFAULT_MOVIES.map(movie => ({
+...movie
+}));
+
+}
+
+
+function saveMovies(){
+
+try{
+
+localStorage.setItem(
+STORAGE_KEY,
+JSON.stringify(movies)
+);
+
+}catch(error){
+
+console.warn(
+"Could not save movies",
+error
+);
+
+toast(
+"Could not save changes"
+);
+
+}
+
+}
+
+
+/* -----------------------------
+   RENDER MOVIES
+----------------------------- */
+
+function render(){
+
+const list =
+$("movieList");
+
+list.innerHTML = "";
+
+
+if(movies.length === 0){
+
+list.innerHTML =
+`<div class="empty">
+Your movie list is empty.<br>
+Tap + to add your first movie.
+</div>`;
+
+}
+
+
+movies.forEach((movie,index) => {
+
+const card =
+document.createElement("article");
+
+card.className =
+"movie" +
+(movie.watched ? " watched" : "");
+
+
+const meta =
+[
+movie.year,
+movie.director
+]
+.filter(Boolean)
+.join(" · ");
+
+
+card.innerHTML = `
+
+<div class="num">
+${index + 1}
+</div>
+
+<div class="movie-main">
+
+<div class="movie-title"></div>
+
+<div class="meta"></div>
+
+</div>
+
+<div style="
+display:flex;
+align-items:center;
+gap:0;
+">
+
+<input
+class="tick"
+type="checkbox"
+${movie.watched ? "checked" : ""}
+aria-label="Mark watched">
+
+<button
+class="menu-btn"
+aria-label="Movie menu">
+
+⋮
+
+</button>
+
+</div>
+`;
+
+
+card.querySelector(
+".movie-title"
+).textContent =
+movie.title || "Untitled";
+
+
+card.querySelector(
+".meta"
+).textContent =
+meta || "Details not added";
+
+
+card.querySelector(
+".tick"
+).addEventListener(
+"change",
+event => {
+
+movies[index].watched =
+event.target.checked;
+
+saveMovies();
+
+render();
+
+}
+);
+
+
+card.querySelector(
+".menu-btn"
+).addEventListener(
+"click",
+event => {
+
+event.stopPropagation();
+
+showMenu(
+index,
+event.currentTarget
+);
+
+}
+);
+
+
+list.appendChild(card);
+
+});
+
+
+const watched =
+movies.filter(
+movie => movie.watched
+).length;
+
+
+$("summaryLeft").textContent =
+`${watched} of 100 watched`;
+
+
+$("summaryRight").textContent =
+`${movies.length} on the list`;
+
+
+$("progressBar").style.width =
+`${Math.min(watched,100)}%`;
+
+}
+
+
+/* -----------------------------
+   ADD / EDIT SHEET
+----------------------------- */
+
+function openSheet(index = null){
+
+editingIndex =
+index;
+
+
+$("sheetTitle").textContent =
+index === null
+? "Add movie"
+: "Edit movie";
+
+
+let movie;
+
+
+if(index === null){
+
+movie = {
+
+title:"",
+director:"",
+year:"",
+position:
+movies.length + 1
+
+};
+
+}else{
+
+movie =
+movies[index];
+
+}
+
+
+$("title").value =
+movie.title || "";
+
+
+$("director").value =
+movie.director || "";
+
+
+$("year").value =
+movie.year || "";
+
+
+$("position").value =
+index === null
+? Math.min(
+movies.length + 1,
+100
+)
+: index + 1;
+
+
+$("overlay").classList.add(
+"open"
+);
+
+$("sheet").classList.add(
+"open"
+);
+
+
+setTimeout(() => {
+
+$("title").focus();
+
+},150);
+
+}
+
+
+function closeSheet(){
+
+$("overlay").classList.remove(
+"open"
+);
+
+$("sheet").classList.remove(
+"open"
+);
+
+editingIndex =
+null;
+
+}
+
+
+/* -----------------------------
+   MOVIE LOOKUP
+----------------------------- */
+
+/*
+This uses Wikipedia's public API.
+
+No API key is needed.
+
+Type:
+
+Interstellar
+
+then tap:
+
+Find year & director
+
+The app searches Wikipedia and
+tries to extract the release year
+and director automatically.
+*/
+
+async function findMovie(){
+
+const query =
+$("title").value.trim();
+
+
+if(!query){
+
+toast(
+"Enter a movie title first"
+);
+
+return;
+
+}
+
+
+const button =
+$("lookupBtn");
+
+
+button.disabled =
+true;
+
+button.textContent =
+"Searching…";
+
+
+try{
+
+const apiUrl =
+
+"https://en.wikipedia.org/w/api.php" +
+
+"?action=query" +
+
+"&generator=search" +
+
+"&gsrsearch=" +
+
+encodeURIComponent(
+query + " film"
+) +
+
+"&gsrnamespace=0" +
+
+"&gsrlimit=5" +
+
+"&prop=extracts" +
+
+"&exintro=1" +
+
+"&explaintext=1" +
+
+"&format=json" +
+
+"&origin=*";
+
+
+const response =
+await fetch(apiUrl);
+
+
+if(!response.ok){
+
+throw new Error(
+"Network error"
+);
+
+}
+
+
+const data =
+await response.json();
+
+
+const pages =
+Object.values(
+data.query?.pages || {}
+);
+
+
+if(!pages.length){
+
+toast(
+"Movie not found"
+);
+
+return;
+
+}
+
+
+/*
+Try to select the best result.
+*/
+
+let page =
+pages[0];
+
+
+const exact =
+pages.find(
+item =>
+item.title
+.toLowerCase()
+.includes(
+query.toLowerCase()
+)
+);
+
+
+if(exact){
+
+page =
+exact;
+
+}
+
+
+const text =
+page.extract || "";
+
+
+/*
+Extract year.
+*/
+
+const yearMatch =
+text.match(
+/\b(19|20)\d{2}\b/
+);
+
+
+/*
+Extract director.
+
+Wikipedia introductions commonly use:
+
+"film directed by Christopher Nolan"
+
+*/
+
+let directorMatch =
+text.match(
+/directed by ([A-Z][^.;,]+)/i
+);
+
+
+if(!directorMatch){
+
+directorMatch =
+text.match(
+/director(?:\s+is|\s*:)\s*([A-Z][^.;,]+)/i
+);
+
+}
+
+
+if(page.title){
+
+$("title").value =
+page.title
+.replace(
+/\s*\(film\)$/i,
+""
+);
+
+}
+
+
+if(yearMatch){
+
+$("year").value =
+yearMatch[0];
+
+}
+
+
+if(directorMatch){
+
+$("director").value =
+directorMatch[1].trim();
+
+}
+
+
+if(
+yearMatch ||
+directorMatch
+){
+
+toast(
+"Movie details found"
+);
+
+}else{
+
+toast(
+"Movie found — check the details"
+);
+
+}
+
+
+}catch(error){
+
+console.error(error);
+
+toast(
+"Couldn't look it up. Check your internet."
+);
+
+}finally{
+
+button.disabled =
+false;
+
+button.textContent =
+"🎬 Find year & director";
+
+}
+
+}
+
+
+/* -----------------------------
+   SAVE MOVIE
+----------------------------- */
+
+$("movieForm").addEventListener(
+"submit",
+event => {
+
+event.preventDefault();
+
+
+const title =
+$("title").value.trim();
+
+
+if(!title){
+
+return;
+
+}
+
+
+const director =
+$("director").value.trim();
+
+
+const year =
+$("year").value.trim();
+
+
+let position =
+parseInt(
+$("position").value,
+10
+);
+
+
+if(
+!Number.isFinite(position)
+){
+
+position =
+movies.length + 1;
+
+}
+
+
+position =
+Math.max(
+1,
+Math.min(
+100,
+position
+)
+);
+
+
+/*
+ADD
+*/
+
+if(editingIndex === null){
+
+const movie = {
+
+title,
+director,
+year,
+watched:false
+
+};
+
+
+movies.splice(
+Math.min(
+position - 1,
+movies.length
+),
+0,
+movie
+);
+
+
+/*
+Maximum 100 movies.
+*/
+
+if(movies.length > 100){
+
+movies.length = 100;
+
+}
+
+
+toast(
+"Movie added"
+);
+
+}
+
+
+/*
+EDIT
+*/
+
+else{
+
+const movie =
+movies[editingIndex];
+
+
+movie.title =
+title;
+
+movie.director =
+director;
+
+movie.year =
+year;
+
+
+/*
+Move edited movie
+to requested position.
+*/
+
+const movedMovie =
+movies.splice(
+editingIndex,
+1
+)[0];
+
+
+movies.splice(
+Math.min(
+position - 1,
+movies.length
+),
+0,
+movedMovie
+);
+
+
+toast(
+"Movie updated"
+);
+
+}
+
+
+saveMovies();
+
+render();
+
+closeSheet();
+
+}
+);
+
+
+/* -----------------------------
+   MOVE MOVIE
+----------------------------- */
+
+function moveMovie(
+from,
+to
+){
+
+if(
+to < 0 ||
+to >= movies.length
+){
+
+return;
+
+}
+
+
+const movie =
+movies.splice(
+from,
+1
+)[0];
+
+
+movies.splice(
+to,
+0,
+movie
+);
+
+
+saveMovies();
+
+render();
+
+}
+
+
+/* -----------------------------
+   THREE DOT MENU
+----------------------------- */
+
+function showMenu(
+index,
+button
+){
+
+menuIndex =
+index;
+
+
+const rect =
+button.getBoundingClientRect();
+
+
+const menu =
+$("menuPop");
+
+
+menu.classList.add(
+"show"
+);
+
+
+const width =
+190;
+
+
+let left =
+Math.min(
+window.innerWidth -
+width -
+10,
+
+Math.max(
+10,
+rect.right - width
+)
+);
+
+
+let top =
+rect.bottom + 5;
+
+
+if(
+top + 190 >
+window.innerHeight
+){
+
+top =
+Math.max(
+10,
+rect.top - 195
+);
+
+}
+
+
+menu.style.left =
+left + "px";
+
+
+menu.style.top =
+top + "px";
+
+}
+
+
+function hideMenu(){
+
+$("menuPop")
+.classList.remove(
+"show"
+);
+
+menuIndex =
+null;
+
+}
+
+
+/* -----------------------------
+   MENU ACTIONS
+----------------------------- */
+
+$("menuPop")
+.addEventListener(
+"click",
+event => {
+
+const action =
+event.target.dataset.action;
+
+
+if(
+!action ||
+menuIndex === null
+){
+
+return;
+
+}
+
+
+const index =
+menuIndex;
+
+
+hideMenu();
+
+
+if(
+action === "edit"
+){
+
+openSheet(index);
+
+}
+
+
+if(
+action === "up"
+){
+
+moveMovie(
+index,
+index - 1
+);
+
+}
+
+
+if(
+action === "down"
+){
+
+moveMovie(
+index,
+index + 1
+);
+
+}
+
+
+if(
+action === "delete"
+){
+
+const name =
+movies[index]?.title ||
+"Movie";
+
+
+if(
+confirm(
+`Delete "${name}" from your list?`
+)
+){
+
+movies.splice(
+index,
+1
+);
+
+saveMovies();
+
+render();
+
+toast(
+"Movie deleted"
+);
+
+}
+
+}
+
+}
+);
+
+
+/* -----------------------------
+   THEME
+----------------------------- */
+
+$("themeBtn")
+.addEventListener(
+"click",
+() => {
+
+const current =
+document.documentElement
+.dataset.theme;
+
+
+let next;
+
+
+if(current === "dark"){
+
+next =
+"light";
+
+}else if(
+current === "light"
+){
+
+next =
+"dark";
+
+}else{
+
+next =
+window.matchMedia(
+"(prefers-color-scheme: dark)"
+).matches
+? "light"
+: "dark";
+
+}
+
+
+document.documentElement
+.dataset.theme =
+next;
+
+
+$("themeBtn").textContent =
+next === "dark"
+? "☀"
+: "☾";
+
+
+try{
+
+localStorage.setItem(
+"100-days-theme",
+next
+);
+
+}catch(error){
+
+console.warn(error);
+
+}
+
+}
+);
+
+
+/* -----------------------------
+   RESTORE THEME
+----------------------------- */
+
+try{
+
+const savedTheme =
+localStorage.getItem(
+"100-days-theme"
+);
+
+
+if(savedTheme){
+
+document.documentElement
+.dataset.theme =
+savedTheme;
+
+
+$("themeBtn").textContent =
+savedTheme === "dark"
+? "☀"
+: "☾";
+
+}
+
+}catch(error){
+
+console.warn(error);
+
+}
+
+
+/* -----------------------------
+   TOAST
+----------------------------- */
+
+function toast(message){
+
+const element =
+$("toast");
+
+
+element.textContent =
+message;
+
+
+element.classList.add(
+"show"
+);
+
+
+clearTimeout(
+window.toastTimer
+);
+
+
+window.toastTimer =
+setTimeout(
+() => {
+
+element.classList.remove(
+"show"
+);
+
+},
+1800
+);
+
+}
+
+
+/* -----------------------------
+   BUTTONS
+----------------------------- */
+
+$("addBtn").addEventListener(
+"click",
+() => {
+
+openSheet();
+
+}
+);
+
+
+$("lookupBtn").addEventListener(
+"click",
+findMovie
+);
+
+
+$("cancelBtn").addEventListener(
+"click",
+closeSheet
+);
+
+
+$("overlay").addEventListener(
+"click",
+closeSheet
+);
+
+
+/*
+Close menus when tapping elsewhere.
+*/
+
+document.addEventListener(
+"click",
+event => {
+
+if(
+!$("menuPop")
+.contains(event.target) &&
+
+!event.target.closest(
+".menu-btn"
+)
+){
+
+hideMenu();
+
+}
+
+}
+);
+
+
+/*
+Escape key.
+*/
+
+document.addEventListener(
+"keydown",
+event => {
+
+if(
+event.key === "Escape"
+){
+
+hideMenu();
+
+closeSheet();
+
+}
+
+}
+);
+
+
+/* INITIAL RENDER */
+
+render();
+
 })();
 </script>
+
 </body>
 </html>
